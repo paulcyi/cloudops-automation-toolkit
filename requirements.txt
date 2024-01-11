@@ -25,3 +25,4 @@ s3transfer==0.10.4
 six==1.17.0
 tomlkit==0.13.2
 urllib3==2.3.0
+schedule==1.2.1
