@@ -1,7 +1,10 @@
-import psutil
+# Standard library imports
 from typing import Dict, Any
-from prometheus_client import Gauge, CollectorRegistry
+import time
 
+# Third-party imports
+import psutil
+from prometheus_client import Gauge, CollectorRegistry
 
 class SystemMonitor:
     """
