@@ -6,6 +6,7 @@ import time
 import psutil
 from prometheus_client import Gauge, CollectorRegistry
 
+
 class SystemMonitor:
     """
     A class to monitor system resources with Prometheus metrics integration.
