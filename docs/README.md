@@ -33,7 +33,14 @@ A comprehensive DevOps toolkit for AWS cloud environments, providing automated s
 - Black for formatting
 - pylint for code quality
 
-## Installation
+## Installation & Setup
+
+### Prerequisites
+- Python 3.11 or higher
+- Git
+- AWS account (for cloud features)
+
+### Initial Setup
 1. Clone the repository
 ```bash
 git clone https://github.com/paulcyi/cloudops-automation-toolkit.git
@@ -42,40 +49,77 @@ cd cloudops-automation-toolkit
 
 2. Create and activate virtual environment
 ```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+python3 -m venv venv
+source venv/bin/activate  # On Unix/MacOS
+# or
+.\venv\Scripts\activate  # On Windows
 ```
 
-3. Install dependencies
+3. Install required packages
 ```bash
-pip install -r requirements.txt
+python3 -m pip install pytest psutil
+# or for all dependencies:
+python3 -m pip install -r requirements.txt
 ```
-
-## Usage
-[Coming Soon]
 
 ## Development
-This project follows DevOps best practices:
-- Git-flow branching strategy
-- Comprehensive testing
-- CI/CD implementation
-- Infrastructure as Code
-- Security-first approach
 
-### Development Setup
-1. Install development dependencies
+### Development Environment
+
+#### Daily Workflow
+1. Activate the virtual environment:
 ```bash
-pip install -r requirements.txt
+source venv/bin/activate  # On Unix/MacOS
+# or
+.\venv\Scripts\activate  # On Windows
 ```
 
-2. Run tests
+2. Work on your feature branch:
 ```bash
-pytest
+git checkout -b feature/your-feature-name
 ```
 
-3. Check code style
+3. Run tests:
 ```bash
+pytest tests/ -v
+```
+
+4. Before committing:
+   - Run all tests
+   - Update documentation if needed
+   - Follow commit message convention: type(scope): description
+
+5. When finished, deactivate the virtual environment:
+```bash
+deactivate
+```
+
+### Development Standards
+
+#### Git Workflow
+- Main branch: Production-ready code
+- Develop branch: Integration branch
+- Feature branches: Format `feature/component-name`
+- Commits: Use conventional commits format
+
+#### Testing
+- Write tests for all new features
+- Maintain >80% test coverage
+- Run full test suite before commits
+
+#### Code Style
+- Follow PEP 8 guidelines
+- Use type hints
+- Document all functions and classes
+- Use Black for formatting
+- Use pylint for code quality
+
+### Code Quality
+```bash
+# Format code
 black .
+
+# Check code quality
 pylint src/
 ```
 
@@ -91,6 +135,9 @@ cloudops-automation-toolkit/
 ├── docs/
 └── requirements.txt
 ```
+
+## Usage
+[Coming Soon]
 
 ## Contributing
 [Coming Soon]
