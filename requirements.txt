@@ -4,3 +4,4 @@ prometheus_client==0.21.1
 psutil>=5.9.0
 pylint==3.3.3
 pytest==8.3.4
+black
