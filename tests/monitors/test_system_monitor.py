@@ -1,3 +1,5 @@
+# pylint: disable=redefined-outer-name
+import time
 import pytest
 from prometheus_client import CollectorRegistry
 from src.monitors.system_monitor import SystemMonitor
@@ -101,7 +103,6 @@ def test_continuous_monitoring(system_monitor):
     """
     Integration test for continuous monitoring functionality.
     """
-    import time
 
     # Collect metrics multiple times
     readings = []
