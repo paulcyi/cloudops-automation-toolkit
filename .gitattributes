@@ -1,0 +1,4 @@
+*.py linguist-language=Python
+*.md linguist-documentation
+requirements.txt linguist-vendored
+pytest.ini linguist-vendored
