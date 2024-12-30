@@ -10,12 +10,33 @@ def test_read_nonexistent_file():
 
 def test_read_existing_file(tmp_path):
     """Test reading a file with known content."""
-    # Create a temporary log file
     log_file = tmp_path / "test.log"
     test_content = ["line 1\n", "line 2\n"]
     log_file.write_text("".join(test_content))
     
-    # Read and verify the content
     reader = LogReader(str(log_file))
     result = reader.read_log()
     assert result == test_content, "File content should match what was written"
+
+def test_find_patterns(tmp_path):
+    """Test pattern matching in log files."""
+    log_file = tmp_path / "test.log"
+    test_content = [
+        "2024-12-30 10:15:30 ERROR Database connection failed\n",
+        "2024-12-30 10:15:35 INFO Normal operation resumed\n",
+        "2024-12-30 10:15:40 ERROR Network timeout\n"
+    ]
+    log_file.write_text("".join(test_content))
+    
+    reader = LogReader(str(log_file))
+    
+    # Test finding ERROR patterns
+    error_matches = reader.find_patterns(r'ERROR.*')
+    assert len(error_matches) == 2, "Should find two ERROR entries"
+    assert all('ERROR' in match['pattern_match'] for match in error_matches)
+    assert all('2024-12-30' in match['timestamp'] for match in error_matches)
+
+    # Test finding INFO patterns
+    info_matches = reader.find_patterns(r'INFO.*')
+    assert len(info_matches) == 1, "Should find one INFO entry"
+    assert 'INFO' in info_matches[0]['pattern_match']
