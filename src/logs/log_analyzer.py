@@ -1,0 +1,150 @@
+"""
+Log analysis module for collecting, parsing, and analyzing system and application logs.
+Provides pattern recognition and alert generation capabilities.
+"""
+
+from typing import Dict, List, Optional, Pattern
+import re
+import logging
+from datetime import datetime
+from pathlib import Path
+from dataclasses import dataclass
+
+@dataclass
+class LogPattern:
+    """Represents a pattern to match in logs with associated severity and description."""
+    pattern: Pattern
+    severity: str
+    description: str
+
+@dataclass
+class LogAlert:
+    """Represents an alert generated from log analysis."""
+    timestamp: datetime
+    severity: str
+    message: str
+    source: str
+    pattern_matched: str
+
+class LogAnalyzer:
+    """
+    A class to analyze log files and generate alerts based on pattern matching.
+    """
+    def __init__(self, log_dir: Path):
+        """
+        Initialize the LogAnalyzer with a directory to monitor.
+
+        Args:
+            log_dir: Path to the directory containing log files
+        """
+        self.log_dir = log_dir
+        self.patterns: List[LogPattern] = []
+        self.alerts: List[LogAlert] = []
+        
+        # Configure logging
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        )
+        self.logger = logging.getLogger(__name__)
+        
+        # Initialize default patterns
+        self._init_default_patterns()
+    
+    def _init_default_patterns(self) -> None:
+        """Initialize default log patterns to match common issues."""
+        default_patterns = [
+            LogPattern(
+                pattern=re.compile(r'error', re.IGNORECASE),
+                severity='ERROR',
+                description='Generic error detection'
+            ),
+            LogPattern(
+                pattern=re.compile(r'warning', re.IGNORECASE),
+                severity='WARNING',
+                description='Generic warning detection'
+            ),
+            LogPattern(
+                pattern=re.compile(r'exception|traceback', re.IGNORECASE),
+                severity='ERROR',
+                description='Exception stack trace detection'
+            ),
+            LogPattern(
+                pattern=re.compile(r'failed\s+to\s+connect', re.IGNORECASE),
+                severity='ERROR',
+                description='Connection failure detection'
+            )
+        ]
+        self.patterns.extend(default_patterns)
+    
+    def add_pattern(self, pattern: str, severity: str, description: str) -> None:
+        """
+        Add a new pattern to match in logs.
+
+        Args:
+            pattern: Regular expression pattern to match
+            severity: Severity level for matching lines
+            description: Description of what the pattern detects
+        """
+        try:
+            compiled_pattern = re.compile(pattern)
+            self.patterns.append(LogPattern(
+                pattern=compiled_pattern,
+                severity=severity.upper(),
+                description=description
+            ))
+            self.logger.info(f"Added new pattern: {description}")
+        except re.error as e:
+            self.logger.error(f"Invalid pattern '{pattern}': {str(e)}")
+            raise ValueError(f"Invalid regular expression pattern: {str(e)}")
+    
+    def analyze_file(self, file_path: Path) -> List[LogAlert]:
+        """
+        Analyze a single log file for matches against defined patterns.
+
+        Args:
+            file_path: Path to the log file to analyze
+
+        Returns:
+            List of LogAlert instances for matches found
+        """
+        alerts = []
+        try:
+            with open(file_path, 'r') as f:
+                for line_num, line in enumerate(f, 1):
+                    for pattern in self.patterns:
+                        if pattern.pattern.search(line):
+                            alert = LogAlert(
+                                timestamp=datetime.now(),
+                                severity=pattern.severity,
+                                message=line.strip(),
+                                source=f"{file_path}:{line_num}",
+                                pattern_matched=pattern.description
+                            )
+                            alerts.append(alert)
+                            self.logger.info(
+                                f"Alert generated from {file_path}: {pattern.description}"
+                            )
+        except Exception as e:
+            self.logger.error(f"Error analyzing file {file_path}: {str(e)}")
+            raise
+        
+        return alerts
+    
+    def analyze_directory(self) -> List[LogAlert]:
+        """
+        Analyze all log files in the configured directory.
+
+        Returns:
+            List of LogAlert instances for all matches found
+        """
+        all_alerts = []
+        try:
+            for file_path in self.log_dir.glob('*.log'):
+                alerts = self.analyze_file(file_path)
+                all_alerts.extend(alerts)
+        except Exception as e:
+            self.logger.error(f"Error analyzing directory {self.log_dir}: {str(e)}")
+            raise
+        
+        return all_alerts
