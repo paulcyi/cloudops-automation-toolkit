@@ -40,3 +40,23 @@ def test_find_patterns(tmp_path):
     info_matches = reader.find_patterns(r'INFO.*')
     assert len(info_matches) == 1, "Should find one INFO entry"
     assert 'INFO' in info_matches[0]['pattern_match']
+
+def test_error_pattern_matching(tmp_path):
+    """Test finding error patterns in logs."""
+    # Create a test log file
+    log_file = tmp_path / "errors.log"
+    test_content = [
+        "2024-12-30 23:15:00 INFO: Application started\n",
+        "2024-12-30 23:16:00 ERROR: Database connection failed\n",
+        "2024-12-30 23:17:00 INFO: Retry connection\n"
+    ]
+    log_file.write_text("".join(test_content))
+    
+    # Use LogReader to find ERROR patterns
+    reader = LogReader(str(log_file))
+    error_matches = reader.find_patterns(r'ERROR.*')
+    
+    # Verify we found the error
+    assert len(error_matches) == 1, "Should find one error"
+    assert "Database connection failed" in error_matches[0]['content']
+    assert error_matches[0]['timestamp'] == "2024-12-30 23:16:00"
