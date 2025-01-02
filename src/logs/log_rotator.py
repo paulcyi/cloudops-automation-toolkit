@@ -1,7 +1,4 @@
-"""
-Log rotation module for managing log file sizes and retention.
-Handles rotation based on size or time with configurable settings.
-"""
+"""Log rotation module for managing log file sizes and retention."""
 
 from pathlib import Path
 import shutil
@@ -10,8 +7,6 @@ from datetime import datetime
 from typing import Optional
 
 class LogRotator:
-    """Manages log rotation based on size or time thresholds."""
-    
     def __init__(
         self,
         log_path: Path,
