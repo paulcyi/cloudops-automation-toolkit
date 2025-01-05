@@ -12,6 +12,7 @@ import re
 @dataclass
 class LogAlert:
     """Data class representing a log alert with timestamp and message."""
+
     timestamp: datetime
     message: str
     severity: str
@@ -26,9 +27,9 @@ class LogAnalyzer:
     def __init__(self):
         """Initialize the LogAnalyzer with default patterns."""
         self.patterns: Dict[str, str] = {
-            'error': r'ERROR|CRITICAL|FATAL',
-            'warning': r'WARNING|WARN',
-            'info': r'INFO'
+            "error": r"ERROR|CRITICAL|FATAL",
+            "warning": r"WARNING|WARN",
+            "info": r"INFO",
         }
 
     def analyze_file(self, file_path: Path) -> List[LogAlert]:
@@ -42,21 +43,21 @@ class LogAnalyzer:
             List of LogAlert objects containing detected issues
         """
         alerts: List[LogAlert] = []
-        
+
         try:
-            with open(file_path, 'r', encoding='utf-8') as file:
+            with open(file_path, "r", encoding="utf-8") as file:
                 for line in file:
-                    alert = self._process_line(line)
+                    alert = self.process_line(line)
                     if alert:
                         alerts.append(alert)
-        except FileNotFoundError:
-            raise FileNotFoundError(f"Log file not found: {file_path}")
+        except FileNotFoundError as exc:
+            raise FileNotFoundError(f"Log file not found: {file_path}") from exc
         except Exception as e:
-            raise RuntimeError(f"Error processing log file: {e}")
+            raise RuntimeError(f"Error processing log file: {e}") from e
 
         return alerts
 
-    def _process_line(self, line: str) -> LogAlert | None:
+    def process_line(self, line: str) -> LogAlert | None:
         """
         Process a single log line and create an alert if patterns match.
 
@@ -66,14 +67,14 @@ class LogAnalyzer:
         Returns:
             LogAlert if pattern matches, None otherwise
         """
-        timestamp_pattern = r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}'
+        timestamp_pattern = r"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}"
         timestamp_match = re.search(timestamp_pattern, line)
-        
+
         if not timestamp_match:
             return None
 
         timestamp_str = timestamp_match.group()
-        timestamp = datetime.strptime(timestamp_str, '%Y-%m-%d %H:%M:%S')
+        timestamp = datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S")
 
         for severity, pattern in self.patterns.items():
             if re.search(pattern, line):
@@ -81,9 +82,9 @@ class LogAnalyzer:
                     timestamp=timestamp,
                     message=line.strip(),
                     severity=severity,
-                    pattern_matched=pattern
+                    pattern_matched=pattern,
                 )
-        
+
         return None
 
     def add_pattern(self, name: str, pattern: str) -> None:
