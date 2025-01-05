@@ -3,7 +3,11 @@ System monitoring module providing resource metrics collection and Prometheus in
 Monitors CPU, memory, and disk usage with configurable Prometheus metrics.
 """
 
+# Standard library imports
 from typing import Dict, Any
+import time
+
+# Third-party imports
 import psutil
 from prometheus_client import Gauge, CollectorRegistry
 
