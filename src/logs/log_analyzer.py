@@ -47,17 +47,17 @@ class LogAnalyzer:
         try:
             with open(file_path, "r", encoding="utf-8") as file:
                 for line in file:
-                    alert = self._process_line(line)
+                    alert = self.process_line(line)
                     if alert:
                         alerts.append(alert)
-        except FileNotFoundError:
-            raise FileNotFoundError(f"Log file not found: {file_path}")
+        except FileNotFoundError as exc:
+            raise FileNotFoundError(f"Log file not found: {file_path}") from exc
         except Exception as e:
-            raise RuntimeError(f"Error processing log file: {e}")
+            raise RuntimeError(f"Error processing log file: {e}") from e
 
         return alerts
 
-    def _process_line(self, line: str) -> LogAlert | None:
+    def process_line(self, line: str) -> LogAlert | None:
         """
         Process a single log line and create an alert if patterns match.
 
