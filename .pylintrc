@@ -1,0 +1,14 @@
+[MASTER]
+disable=
+    C0111, # missing-docstring
+    C0103, # invalid-name
+    C0114, # missing-module-docstring
+    C0115, # missing-class-docstring
+    C0116, # missing-function-docstring
+    W0621  # redefined-outer-name - adding this line
+
+[FORMAT]
+max-line-length=100
+
+[MESSAGES CONTROL]
+disable=W0611,C0111
