@@ -43,11 +43,11 @@ def test_process_line_no_match(test_analyzer):
 def test_add_pattern(test_analyzer):
     """Test adding a new pattern for analysis."""
     test_analyzer.add_pattern(
-        pattern=r"DEBUG",
-        severity="DEBUG",
-        description="Debug message detection"
+        pattern=r"DEBUG", severity="DEBUG", description="Debug message detection"
     )
-    assert any(p.description == "Debug message detection" for p in test_analyzer.patterns)
+    assert any(
+        p.description == "Debug message detection" for p in test_analyzer.patterns
+    )
 
 
 @pytest.mark.integration
@@ -66,9 +66,7 @@ def test_analyze_file(tmp_path, test_analyzer):
 
     # Add pattern for INFO messages
     test_analyzer.add_pattern(
-        pattern=r"INFO",
-        severity="INFO",
-        description="Information message"
+        pattern=r"INFO", severity="INFO", description="Information message"
     )
 
     # Analyze the file
