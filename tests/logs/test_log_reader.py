@@ -1,6 +1,6 @@
 import pytest
 from pathlib import Path
-from ..log_reader import LogReader
+from src.logs.log_reader import LogReader
 
 def test_read_nonexistent_file():
     """Test that reading a nonexistent file returns an empty list."""

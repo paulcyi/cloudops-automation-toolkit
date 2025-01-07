@@ -153,6 +153,31 @@ class LogAnalyzer:
         
         return alerts
     
+    def process_line(self, line: str) -> Optional[LogAlert]:
+        """
+        Process a single log line and create an alert if patterns match.
+
+        Args:
+            line: The log line to process
+
+        Returns:
+            LogAlert if pattern matches, None otherwise
+        """
+        timestamp = self._extract_timestamp(line)
+        if not timestamp:
+            return None
+
+        for pattern in self.patterns:
+            if pattern.pattern.search(line):
+                return LogAlert(
+                    timestamp=timestamp,
+                    severity=pattern.severity,
+                    message=line.strip(),
+                    source="line",
+                    pattern_matched=pattern.description
+                )
+        return None
+    
     def analyze_directory(self) -> List[LogAlert]:
         """
         Analyze all log files in the configured directory.
